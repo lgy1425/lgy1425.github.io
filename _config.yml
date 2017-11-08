@@ -19,7 +19,6 @@ description: >- # this means to ignore newlines until "baseurl:"
   GY's tech blog, Deep Learning, Machine Learning, Web Application, Mobile Application, Data Analysis, Computer Vision
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: lgy1425
 github_username:  lgy1425
 
 # Build settings
@@ -27,6 +26,18 @@ markdown: kramdown
 theme: minima
 plugins:
   - jekyll-feed
+
+collections:
+  category:
+    output: true
+    
+defaults:
+  -
+    scope:
+      path: ""
+      type: category
+    values:
+      layout: "category"
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
