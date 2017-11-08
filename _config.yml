@@ -30,7 +30,10 @@ plugins:
 collections:
   category:
     output: true
-    
+
+
+future: true
+
 defaults:
   -
     scope:
