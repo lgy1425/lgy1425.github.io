@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Detecting and Classifying Tumor in Lung CT Images (Asan Bigdata Contest 2nd Rank)"
-categories: deep learning
+categories: deep-learning
 ---
 
 In January 2017, AMC(Asan Medical Center, Korea) and Microsoft Korea held medical bigdata analysis contest. This research introduced in this article is about one of the 5 projects in the contest and was ranked as 2nd prize. This article introduce shortly research’s method, process and results
