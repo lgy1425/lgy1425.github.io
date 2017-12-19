@@ -165,7 +165,7 @@ bais = {
 
 for i in range(2,20) :
     weights["w_%02d" % (i)] = init_weights([3,3,64,64],"w_%02d" % (i))
-    bais["b_%02d" % (i)] = init_weights([3,3,64,64],"b_%02d" % (i))
+    bais["b_%02d" % (i)] = init_weights([64],"b_%02d" % (i))
 
 
 def model(X,weights,bias) :
@@ -175,12 +175,138 @@ def model(X,weights,bias) :
     layer = tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(input_tensor, weights['w_01'], strides=[1,1,1,1], padding='SAME'), bais['b_01']))
     
     for i in range(2,21) :
-        layer = tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(input_tensor, weights["w_%02d" % (i)], strides=[1,1,1,1], padding='SAME'), bais["b_%02d" % (i)]))
+        layer = tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(layer, weights["w_%02d" % (i)], strides=[1,1,1,1], padding='SAME'), bais["b_%02d" % (i)]))
     
     layer = tf.add(layer,input_tensor)
 
     return layer
 
 #training code is same with SRCNN
+
+```
+
+
+<h3>DPN(<a>https://arxiv.org/pdf/1703.10889.pdf</a>)</h3>
+
+![](https://i.imgur.com/zpmlKJh.png)
+![](https://i.imgur.com/fbzg7Cw.png)
+
+DPN(Deep Projection Convolutional neural network) has structure having recurrent projection unit with residual network like above images. DPN is much deeper (40 layers vs. 20 layers). Not only introducing CNN architectures, it proposed image internal adaptation methods based on self-similarity with assumption that images had recurrent structures. And it also propose back-projection and enhancement prediction. Method for pre/post precessing of super resolution is summarized in the article "Paper Review : Seven ways to improve example-based single image super resolution" in my blog. In data processing, I employed data augmentation(rotation & flip) to apply enhancement prediction. Recurrent structure of DPN is implemented by for loops.
+
+```python
+
+def get_train_batch(batch_size=10) :
+    inputs = []
+    outputs = []
+    
+    random_choice = np.random.choice(train_files,batch_size,replace=False)
+    
+    scale_factor = random.randint(0,2)
+    
+    for f in random_choice :
+        try : 
+            origin = Image.open("img/"+f)
+            width = origin.size[0]
+            height = origin.size[1]
+            x = width * 0.1 + random.randint(0,int(width*0.8-200))
+            y = height * 0.1 + random.randint(0,int(height*0.8-200))
+            
+            cropped = origin.crop((x,y,x+200,y+200))
+            
+            rotation_angle = random.randint(0,3)
+            flip_decision = random.randint(0,1)
+            
+            
+            cropped = cropped.rotate(90*rotation_angle)
+            cropped = cropped.transpose(Image.FLIP_LEFT_RIGHT)
+            
+            low_r_size = (100,100)
+            
+            if scale_factor == 0 :
+                low_r_size = (100,100)
+            elif scale_factor == 1 :
+                low_r_size = (66,66)
+            else :
+                low_r_size = (50,50)
+            
+            low_resolution = cropped.resize(low_r_size).filter(ImageFilter.BLUR)
+            
+            if np.array(low_resolution).shape != low_r_size+(3,) :
+                continue
+            
+            inputs.append(np.array(low_resolution))
+            outputs.append(np.array(cropped))
+        except :
+            continue
+        
+        
+    return np.array(inputs),np.array(outputs),scale_factor
+
+cells = {
+    #first,second is number of convolutional filters and third is number of projection units
+    "cell_1" : [16,16,3],
+    "cell_2" : [16,16,3],
+    "cell_3" : [16,32,3],
+    "cell_4" : [32,32,3],
+    "cell_5" : [32,64,3],
+    "cell_6" : [64,64,3]
+}
+
+
+
+
+weights = {
+    "conv_1" : init_weights([3,3,3,16],"conv_1"),
+    "conv_2" : init_weights([3,3,16,16],"conv_2"),
+    "conv_3" : init_weights([3,3,64,64],"conv_3"),
+    "conv_4" : init_weights([3,3,64,3],"conv_4")    
+}
+bias = {
+    "b_1" : init_weights([16],"b_1"),
+    "b_2" : init_weights([16],"b_2"),
+    "b_3" : init_weights([64],"b_3"),
+    "b_4" : init_weights([64],"b_4")
+}
+
+for cell in sorted(cells) :
+    for p_u in range(1,cells[cell][2]+1) :
+        weights[cell+"_projection_unit_"+str(p_u)+"_conv_1"] = init_weights([3,3,cells[cell][int(p_u!=1)],cells[cell][1]],cell+"_projection_unit_"+str(p_u)+"_conv_1")
+        weights[cell+"_projection_unit_"+str(p_u)+"_conv_2"] = init_weights([3,3,cells[cell][1],cells[cell][1]],cell+"_projection_unit_"+str(p_u)+"_conv_2")
+        bias[cell+"_projection_unit_"+str(p_u)+"_b_1"] = init_weights([cells[cell][1]],cell+"_projection_unit_"+str(p_u)+"_b_1")
+        bias[cell+"_projection_unit_"+str(p_u)+"_b_2"] = init_weights([cells[cell][1]],cell+"_projection_unit_"+str(p_u)+"_b_2")
+        weights[cell+"_projection_unit_"+str(p_u)+"_conv_3"] = init_weights([3,3,cells[cell][int(p_u!=1)],cells[cell][1]],cell+"_projection_unit_"+str(p_u)+"_conv_3")
+        
+
+def model(X,weights,bias) :
+    layer = tf.image.resize_bicubic(X,(200,200) , align_corners=None, name=None)
+    
+    residual = layer
+    
+    layer = tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(layer,weights["conv_1"], strides=[1,1,1,1], padding="SAME"),bias["b_1"]))
+    layer = tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(layer,weights["conv_2"], strides=[1,1,1,1], padding="SAME"),bias["b_2"]))
+    
+    for cell in sorted(cells) :
+        for p_u in range(1,cells[cell][2]+1) :
+            
+            residual_in_projection_unit = layer
+            
+            layer = tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(layer,weights[cell+"_projection_unit_"+str(p_u)+"_conv_1"], strides=[1,1,1,1], padding="SAME"),bias[cell+"_projection_unit_"+str(p_u)+"_b_1"]))
+            layer = tf.nn.relu(tf.nn.bias_add(tf.nn.conv2d(layer,weights[cell+"_projection_unit_"+str(p_u)+"_conv_2"], strides=[1,1,1,1], padding="SAME"),bias[cell+"_projection_unit_"+str(p_u)+"_b_2"]))
+    
+            residual_in_projection_unit = tf.nn.conv2d(residual_in_projection_unit,weights[cell+"_projection_unit_"+str(p_u)+"_conv_3"], strides=[1,1,1,1], padding="SAME")
+        
+            layer = tf.add(layer,residual_in_projection_unit)
+            
+    layer = tf.nn.conv2d(layer,weights["conv_3"], strides=[1,1,1,1], padding="SAME")
+    layer = tf.nn.conv2d(layer,weights["conv_4"], strides=[1,1,1,1], padding="SAME")
+    
+    layer = tf.add(layer,residual)
+    
+    return layer
+
+
+#training code is same with SRCNN
+
+
 
 ```
