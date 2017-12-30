@@ -1,4 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-12-19T14:49:35+09:00</updated><id>http://localhost:4000/</id><title type="html">GY dev</title><subtitle>GY's tech blog, Deep Learning, Machine Learning, Web Application, Mobile Application, Data Analysis, Computer Vision</subtitle><entry><title type="html">Mining Ethereum For a Month</title><link href="http://localhost:4000/blockchain/2017/12/19/Mining-Ethereum-For-a-Month.html" rel="alternate" type="text/html" title="Mining Ethereum For a Month" /><published>2017-12-19T00:00:00+09:00</published><updated>2017-12-19T00:00:00+09:00</updated><id>http://localhost:4000/blockchain/2017/12/19/Mining-Ethereum-For-a-Month</id><content type="html" xml:base="http://localhost:4000/blockchain/2017/12/19/Mining-Ethereum-For-a-Month.html">&lt;p&gt;I have mined Ethereum for a month with my deep learning hardwares. 6 GXT 1080 ti, 2 Tesla K80 model has been employed for mining. The GXT1080ti has a speed of 32Mhash / s and the Tesla K80 has a speed of about 10Mhash / s. When all of GPUs are employed for mining, mining speed reaches to 200Mhash/s. But I have mined Ethereum when my GPUs wasn’t employed for machine learning. So, Ethereum has been mined with 100Mhash/s speed. I have mined Ethereum in MiningPoolHub(http://miningpoolhub.com/).&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-12-30T18:01:18+09:00</updated><id>http://localhost:4000/</id><title type="html">GY dev</title><subtitle>GY's tech blog, Deep Learning, Machine Learning, Web Application, Mobile Application, Data Analysis, Computer Vision</subtitle><entry><title type="html">Paper Review : Medical Image Registration and Fusion with Deep Learning</title><link href="http://localhost:4000/deep/learning/2017/12/29/Paper-Review-Registration-And-Fusion-with-Deep-Learning.html" rel="alternate" type="text/html" title="Paper Review : Medical Image Registration and Fusion with Deep Learning" /><published>2017-12-29T00:00:00+09:00</published><updated>2017-12-29T00:00:00+09:00</updated><id>http://localhost:4000/deep/learning/2017/12/29/Paper-Review-Registration-And-Fusion-with-Deep-Learning</id><content type="html" xml:base="http://localhost:4000/deep/learning/2017/12/29/Paper-Review-Registration-And-Fusion-with-Deep-Learning.html">&lt;p&gt;I had reviewed some papers for brain CT and MR registration and fusion with deep learning project. The number of researches that employed deep learning method for image registration and fusion is lower than other fields such as classification, segmentation, etc. But, I could get some insights from some papers. There are two main ways of employing CNN for registration and fusion. The first one is employing CNN regressor for spatial tranformation parameters. The second one is employing feature map extracted from CNN for silimarity metric. I will introduce 5 papers very shortly. If you want to get detail, you can get full-text from URLs.&lt;/p&gt;
+
+&lt;h4&gt;1. End-to-End Unsupervised Deformable Image Registration with a Convolutional Neural Network&lt;/h4&gt;
+&lt;p&gt;URL : &lt;a href=&quot;https://arxiv.org/abs/1704.06065&quot;&gt;https://arxiv.org/abs/1704.06065&lt;/a&gt;
+&lt;img src=&quot;https://i.imgur.com/znPuMy9.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;DIRNET(deformable image registration) can be trained to generate transformation parameters(dx,dy) at patch-wise. With tranformation parameters at each patch, spatial tranformer and resampler warped moving images. Back-propagation with similarity metric between warped images and fixed images optimized ConvNet regressor. DIRNet implementation in Tensorflow is produced at github page(https://github.com/iwyoo/DIRNet-tensorflow).&lt;/p&gt;
+
+&lt;h4&gt;2. Fast Predictive Image Registration - a Deep Learning Approach&lt;/h4&gt;
+&lt;p&gt;URL : &lt;a href=&quot;https://arxiv.org/abs/1703.10908&quot;&gt;https://arxiv.org/abs/1703.10908&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://i.imgur.com/vBwiPat.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://i.imgur.com/uiobJrC.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://i.imgur.com/BpMdTUW.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;There are 3 steps in this paper.&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Train the prediction network using training images and the ground truth initial momentum obtained by numerical optimization of the LDDMM registration model.&lt;/li&gt;
+  &lt;li&gt;Use the predicted momentum from the prediction network to generate deformation fields to warp the target images in the training dataset back to the space of the moving images.&lt;/li&gt;
+  &lt;li&gt;Use the moving images and the warped-back target images to train the correction network. The correction network learns to predict the diffrence between the ground truth momentum and the predictied momentum from the prediction network.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;In prediction LDDMM network, there are two split encoders and one decoder. It can make the network suitable to multi-modal input. And it has correction networks to finely tuning the tranformations.&lt;/p&gt;
+
+&lt;h4&gt;3. A Medical Image Fusion Method Based on Convolutional Neural Networks&lt;/h4&gt;
+
+&lt;p&gt;URL : &lt;a href=&quot;http://ieeexplore.ieee.org/document/8009769/&quot;&gt;http://ieeexplore.ieee.org/document/8009769/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://i.imgur.com/ege6Uyp.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://i.imgur.com/vvH5dat.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://i.imgur.com/UFQ7xDN.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;It is fusion method with CNN. Two source images are converted to weight map through CNN. Two source images and weight map are fused and it is reconstructed by Laplacian pyramid.&lt;/p&gt;
+
+&lt;h4&gt;4. Scalable High Performance Image Registration Framework by Unsupervised Deep Feature Representations Learning&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://i.imgur.com/Q4IKltR.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;With stacked auto-encoder, critical points from feature representation are employed for registrations.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://i.imgur.com/nigsH6Q.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h4&gt;5. A CNN Regression Approach for Real-Time 2D/3D Registration&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://i.imgur.com/TbNmXjq.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://i.imgur.com/wC52y1O.png&quot; alt=&quot;&quot; /&gt;
+&lt;img src=&quot;https://i.imgur.com/uPo9dXs.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Patch-wise CNN regressors are trained to predict 6 tranformation parameters referred above.&lt;/p&gt;</content><author><name></name></author><summary type="html">I had reviewed some papers for brain CT and MR registration and fusion with deep learning project. The number of researches that employed deep learning method for image registration and fusion is lower than other fields such as classification, segmentation, etc. But, I could get some insights from some papers. There are two main ways of employing CNN for registration and fusion. The first one is employing CNN regressor for spatial tranformation parameters. The second one is employing feature map extracted from CNN for silimarity metric. I will introduce 5 papers very shortly. If you want to get detail, you can get full-text from URLs.</summary></entry><entry><title type="html">Mining Ethereum For a Month</title><link href="http://localhost:4000/blockchain/2017/12/19/Mining-Ethereum-For-a-Month.html" rel="alternate" type="text/html" title="Mining Ethereum For a Month" /><published>2017-12-19T00:00:00+09:00</published><updated>2017-12-19T00:00:00+09:00</updated><id>http://localhost:4000/blockchain/2017/12/19/Mining-Ethereum-For-a-Month</id><content type="html" xml:base="http://localhost:4000/blockchain/2017/12/19/Mining-Ethereum-For-a-Month.html">&lt;p&gt;I have mined Ethereum for a month with my deep learning hardwares. 6 GXT 1080 ti, 2 Tesla K80 model has been employed for mining. The GXT1080ti has a speed of 32Mhash / s and the Tesla K80 has a speed of about 10Mhash / s. When all of GPUs are employed for mining, mining speed reaches to 200Mhash/s. But I have mined Ethereum when my GPUs wasn’t employed for machine learning. So, Ethereum has been mined with 100Mhash/s speed. I have mined Ethereum in MiningPoolHub(http://miningpoolhub.com/).&lt;/p&gt;
 
 &lt;p&gt;Until now, I have mined 0.5334 ETH and it is worth $472. If all of my GPU is employed for mining for a month and current Ethereum price is maintained, I can get about 1 ETH and it is worth $887.&lt;/p&gt;
 
